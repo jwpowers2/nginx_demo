@@ -1,23 +1,26 @@
-import logo from './logo.svg';
+import { Container, Box } from "@mui/material";
+import Navbar from "./components/Navbar";
+import { useEffect, useState } from "react";
+import axios from 'axios';
 import './App.css';
 
 function App() {
+  const [hotDogCount, setHotDogCount] = useState(0)
+  const getDogs = async () => {
+    let dogs = await axios.get("http://api:80/api/hotdogs");
+    setHotDogCount(dogs.count)
+  }
+  useEffect(()=> {
+    setInterval(()=> {
+      //getDogs()
+    },2000)
+  },[])
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Navbar></Navbar>
+      <Container>
+        <h1>{JSON.stringify(hotDogCount}</h1>
+      </Container>
     </div>
   );
 }
