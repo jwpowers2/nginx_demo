@@ -1,0 +1,33 @@
+version: '3.9'
+services:
+  db:
+      container_name: "mongo"
+      image: mongo
+      ports:
+         - 27017:27017
+      volumes:
+         - "mongoauth:/data/db"
+  api:
+      container_name: "api"
+      build: api
+      ports: 
+        - 5000:5000
+      depends_on:
+        - db
+  ui:
+      container_name: "ui"
+      build: ui
+      ports: 
+        - 3000:3000
+  nginx-proxy:
+    depends_on: 
+    - ui
+    - api
+    image: nginx:latest
+    container_name: nginx_proxy
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx-proxy/nginx.conf:/etc/nginx/conf.d/default.conf
+volumes:
+  mongoauth:
