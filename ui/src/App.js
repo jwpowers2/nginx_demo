@@ -1,25 +1,36 @@
-import { Container, Box } from "@mui/material";
+import { Container, Box, Typography } from "@mui/material";
 import Navbar from "./components/Navbar";
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import './App.css';
 
 function App() {
-  const [hotDogCount, setHotDogCount] = useState(0)
+  const [hotDogCount, setHotDogCount] = useState("");
+  const [hotDogAPI, setHotDogAPI] = useState("");
   const getDogs = async () => {
-    let dogs = await axios.get("http://api:80/api/hotdogs");
-    setHotDogCount(dogs.count)
+    try {
+      let dogs = await axios.get("http://54.85.126.11/api/hotdogs");
+      console.log(dogs.data.count);
+      setHotDogAPI(dogs.data.api);
+      setHotDogCount(dogs.data.count);
+      console.log(hotDogCount);
+    } catch(e){
+      console.log(e)
+    }
   }
   useEffect(()=> {
     setInterval(()=> {
-      //getDogs()
-    },2000)
+      getDogs()
+    },3000)
   },[])
   return (
     <div className="App">
       <Navbar></Navbar>
-      <Container>
-        <h1>{JSON.stringify(hotDogCount}</h1>
+      <Container sx={{color:"black", height: "20rem", marginTop: "10rem"}}>
+        <Typography  variant="h2">hotdogs served: {hotDogCount}</Typography>
+        <Box b="1px solid black">
+          <Typography  variant="h4">Served by API: {hotDogAPI}</Typography>
+        </Box>
       </Container>
     </div>
   );
