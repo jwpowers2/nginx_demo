@@ -1,25 +1,25 @@
 package main
 
 import (
-	"context"
-	"log"
 	"fmt"
-	"os"
+	"log"
 	"math/rand"
+	"strconv"
+
 	"github.com/go-redis/redis"
 	"github.com/gofiber/fiber/v2"
 )
 
 type HotDogs struct {
-	Count int `json:"count"`
-	Api string `json:"api"`
+	Count int    `json:"count"`
+	Api   string `json:"api"`
 }
 
 func main() {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "redis:6379", // Redis server address
-		Password: "",               // No password
-		DB:       0,                // Default DB
+		Password: "password",   // No password
+		DB:       0,            // Default DB
 	})
 
 	// Ping Redis to check the connection
@@ -29,36 +29,34 @@ func main() {
 		return
 	}
 	fmt.Println("Connected to Redis:", pong)
-
-    redisClient := NewRedis()
 	app := fiber.New()
-    
+
 	app.Get("/api/hotdogs", func(c *fiber.Ctx) error {
 
-		hotdogs := HotDogs{Count:0, Api:"api-2"}
+		hotdogs := HotDogs{Count: 0, Api: "api-2"}
 
 		fmt.Println("hot dog GET")
 
-		val, err := client.Get(context.Background(), "hotdogs").Result()
+		val, err := client.Get("hotdogs").Result()
 		if err != nil {
 			fmt.Println("Failed to get key:", err)
-			return
+
 		}
-	
+
 		fmt.Println("Value for key 'hotdogs':", val)
-        dogInt := strconv.Atoi(val)
-		if (val < 1000){
-			dogInt = val
+		dogInt, _ := strconv.Atoi(val)
+		if dogInt > 1000 {
+			dogInt = 0
 		}
 
 		moreDogs := rand.Intn(5)
-		dogInt += modeDogs
+		dogInt += moreDogs
 		dogString := strconv.Itoa(dogInt)
-		
-		err = client.Set(context.Background(), "hotdogs", "dogString", 0).Err()
+
+		err = client.Set("hotdogs", dogString, 0).Err()
 		if err != nil {
 			fmt.Println("Failed to set key:", err)
-			return
+
 		}
 		hotdogs.Count = dogInt
 		return c.JSON(hotdogs)
