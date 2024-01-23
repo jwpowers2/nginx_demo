@@ -1,39 +1,25 @@
 # NGINX Demo with Docker Compose
 
-## demo reverse proxy
+## how does it work?
 
-without the abstraction of containerization, you use proxy_pass directive in a location for your server to 
-redirect traffic to somewhere else when it hits that 'location' route for the front-facing interface, the proxy.
+* hot dogs served is incremented with a random int between 0 and 5 every time the /api/hotdogs endpoint gets a hit
 
-with docker compose containerization and its internal network (host only network mode), and internal name resolution, we can use the load balancer
-functionality to direct traffic 'upstream' to another host in the internal network. 
-You use the proxy_pass directive in the server > location and also the 'upstream' directive. 
+* the UI polls /api/hotdogs every three seconds
 
-## demo DDOS protection
+## spin this up to demo nginx anti DDOS, reverse-proxy, load balance
 
-can test slow loris using
-https://github.com/GinjaChris/bashloris
+1. go the project root
 
-sudo sh bashloris.sh localhost 80
+2. start with docker compose (you'll need docker installed)
 
-look at resource using using 'top'
+` docker compose up --build`
 
-test flood using curl 
-this exceeds the rate limiting, but you see the site is still up and the hot dogs are 
-still being made, but the numbers are not increasing at a crazy rate. It is dumping off the excess 
-requests but still processing a minimal ammount within the designated threshold.
+## test the funcionality
 
-while true; do curl http://localhost/api/hotdogs; sleep .05; clear; done
+* try to flood the hotdogs endpoint and watch it resist!
 
-references:
-https://www.nginx.com/blog/mitigating-ddos-attacks-with-nginx-and-nginx-plus/
-https://www.nginx.com/blog/rate-limiting-nginx/
+`while true; do curl http://localhost/api/hotdogs; sleep .05; clear; done`
 
-## demo load balancing
+* watch the load balancer work with the UI, as the UI Polls the backend
 
-
-
-https://www.nginx.com/resources/glossary/reverse-proxy-vs-load-balancer/
-https://umasrinivask.medium.com/configure-nginx-as-a-reverse-proxy-with-docker-compose-file-4ebba2b75c89
-
-https://github.com/gofiber/recipes/blob/master/mongodb/main.go
+* the hot dog counts are set in a redis db shared by the load balanced API's 
