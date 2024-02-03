@@ -8,6 +8,10 @@
 
 ## spin this up to demo nginx anti DDOS, reverse-proxy, load balance
 
+- set address for proxy in ui .env
+
+- add PROXY_ADDRESS=proxyIpAddress to .env in ui root
+
 1. go the project root
 
 2. start with docker compose (you'll need docker installed)

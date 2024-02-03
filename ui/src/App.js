@@ -9,7 +9,7 @@ function App() {
   const [hotDogAPI, setHotDogAPI] = useState("");
   const getDogs = async () => {
     try {
-      let dogs = await axios.get("http://54.85.126.11/api/hotdogs");
+      let dogs = await axios.get(`http://${process.env.PROXY_ADDRESS}/api/hotdogs`);
       console.log(dogs.data.count);
       setHotDogAPI(dogs.data.api);
       setHotDogCount(dogs.data.count);
